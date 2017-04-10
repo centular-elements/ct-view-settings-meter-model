@@ -1,0 +1,38 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-input/paper-input.html">
+
+<!--
+`ct-view-settings-meter-model`
+Element to display global meter model settings on the Centular platform
+
+@demo demo/index.html 
+-->
+
+<dom-module id="ct-view-settings-meter-model">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <h2>Hello [[prop1]]</h2>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'ct-view-settings-meter-model',
+
+      properties: {
+        prop1: {
+          type: String,
+          value: 'ct-view-settings-meter-model',
+        },
+      },
+
+    });
+  </script>
+</dom-module>
