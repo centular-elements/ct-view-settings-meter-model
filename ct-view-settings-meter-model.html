@@ -1,6 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
 
 <!--
 `ct-view-settings-meter-model`
@@ -17,22 +18,176 @@ Element to display global meter model settings on the Centular platform
       :host {
         display: block;
       }
+
+      .new-container .row {
+        display: flex;
+        align-items: center;
+      }
+
     </style>
-    <h2>Hello [[prop1]]</h2>
+
+    <div class="fluid-container new-container">
+      <div class="row">
+        <div class="col-sm-10">
+          <paper-input id="newModel" label="New Model Name" type="text"></paper-input>
+        </div>
+        <div class="col-sm-2">
+          <paper-button class="btn btn-primary btn-block" on-tap="_newModelHandler">Add Model</paper-button>
+        </div>
+      </div>
+    </div>
+
+    <div class="fluid-container">
+
+      <!--iterate through meter models here-->
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <div class="col-sm-8">
+            <paper-input
+                    type="text"
+                    no-label
+                    value="Meter Model Name" readonly$="[[_computeReadOnly(_isStatusEdit)]]"></paper-input>
+          </div>
+          <div class="col-sm-2">
+            <paper-icon-button icon="create" class$="btn btn-block [[_computeBtnStyle(_isStatusEdit)]]" on-tap="_editBtnHandler">textHere</paper-icon-button>
+          </div>
+          <div class="col-sm-2">
+            <paper-icon-button class="btn btn-danger btn-block" icon="delete" on-tap="_modalHandler" ></paper-icon-button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <div class="col-sm-8">
+            <paper-input
+                    type="text"
+                    no-label
+                    value="Meter Model Name" readonly$="[[_computeReadOnly(_isStatusEdit)]]"></paper-input>
+          </div>
+          <div class="col-sm-2">
+            <paper-icon-button icon="create" class$="btn btn-block [[_computeBtnStyle(_isStatusEdit)]]" on-tap="_editBtnHandler">[[_computeButtonText(_isStatusEdit)]]</paper-icon-button>
+          </div>
+          <div class="col-sm-2">
+            <paper-icon-button class="btn btn-danger btn-block" icon="delete" on-tap="_modalHandler" ></paper-icon-button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <div class="col-sm-8">
+            <paper-input
+                    type="text"
+                    no-label
+                    value="Meter Model Name" readonly$="[[_computeReadOnly(_isStatusEdit)]]"></paper-input>
+          </div>
+          <div class="col-sm-2">
+            <paper-icon-button icon="create" class$="btn btn-block [[_computeBtnStyle(_isStatusEdit)]]" on-tap="_editBtnHandler">[[_computeButtonText(_isStatusEdit)]]</paper-icon-button>
+          </div>
+          <div class="col-sm-2">
+            <paper-icon-button class="btn btn-danger btn-block" icon="delete" on-tap="_modalHandler" ></paper-icon-button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <div class="col-sm-8">
+            <paper-input
+                    type="text"
+                    no-label
+                    value="Meter Model Name" readonly$="[[_computeReadOnly(_isStatusEdit)]]"></paper-input>
+          </div>
+          <div class="col-sm-2">
+            <paper-icon-button icon="create" class$="btn btn-block [[_computeBtnStyle(_isStatusEdit)]]" on-tap="_editBtnHandler">[[_computeButtonText(_isStatusEdit)]]</paper-icon-button>
+          </div>
+          <div class="col-sm-2">
+            <paper-icon-button class="btn btn-danger btn-block" icon="delete" on-tap="_modalHandler" ></paper-icon-button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <paper-dialog id="meterModal" modal no-cancel-on-esc-key no-cancel-on-outside-click>
+      <h2>Please Confirm Meter Model Deletion</h2>
+      <p>
+        Are you sure you want to delete the <strong>Model Name</strong> meter model?
+      </p>
+      <div class="buttons">
+        <paper-button class="btn btn-default"dialog-dismiss>Cancel</paper-button>
+        <paper-button class="btn btn-danger"dialog-confirm on-tap="_removeModelHandler">Delete</paper-button>
+      </div>
+    </paper-dialog>
+
   </template>
 
   <script>
-    Polymer({
+      Polymer({
 
-      is: 'ct-view-settings-meter-model',
+          is: 'ct-view-settings-meter-model',
 
-      properties: {
-        prop1: {
-          type: String,
-          value: 'ct-view-settings-meter-model',
-        },
-      },
+          properties: {
+              _isStatusEdit : {
+                  type: Boolean,
+                  value: function() {
+                      return false;
+                  }
+              },
+          },
 
-    });
+          _computeReadOnly : function(status){
+              return (!status);
+          },
+
+          _computeButtonText: function(isEdit){
+              return (isEdit) ? 'Save Model' : 'Edit Model';
+          },
+
+          _computeBtnStyle : function(isEdit){
+              return (isEdit) ? "btn-primary" : "btn-default";
+          },
+
+          _toggleStatus : function(){
+              this._isStatusEdit = !this._isStatusEdit;
+          },
+
+          _editBtnHandler : function(){
+//            todo: event fired on edit/save
+//            todo: event to emit notification
+
+              this._toggleStatus();
+          },
+
+          _newModelHandler : function(){
+              var newModelName = this.$.newModel.value;
+
+//          todo: add model api call
+//          todo: refresh list of models
+//          todo: trigger notification
+          },
+
+          _modalHandler : function(e){
+              this.$.meterModal.open();
+          },
+
+          _renameModelHandler : function(e) {
+              var modelObj = e.model.item;
+
+              //          todo: rename model api call
+//          todo: refresh list of models
+//          todo: trigger notification
+          },
+
+          _removeModelHandler : function(e) {
+              var modelObj = e.model.item;
+
+              //          todo: remove model api call
+//          todo: refresh list of models
+//          todo: trigger notification
+          }
+
+      });
   </script>
 </dom-module>
