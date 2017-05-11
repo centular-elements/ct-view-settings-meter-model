@@ -3,20 +3,21 @@
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../paper-dialog/paper-dialog.html">
 
-<link rel="import" href="../shared-styles/ct-application-theme.html">
-<link rel="import" href="../shared-styles/global-styles.css">
+<link rel="import" href="../ct-shared-styles/ct-application-theme.html">
+<link rel="import" href="../ct-grid-controls/ct-grid-controls.html">
 
 <!--
 `ct-view-settings-meter-model`
 Element to display global meter model settings on the Centular platform
 
-@demo demo/index.html 
+@demo demo/index.html
 -->
 
 <dom-module id="ct-view-settings-meter-model">
 
   <template>
-    <style is="global-styles">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style is="custom-styles">
       :host {
         display: block;
       }
@@ -26,93 +27,95 @@ Element to display global meter model settings on the Centular platform
         align-items: center;
       }
 
+      paper-material {
+        background: #fff;
+        margin-bottom: 15px;
+        padding: 10px;
+      }
+
+
     </style>
 
-    <div class="fluid-container new-container">
-      <div class="row">
-        <div class="col-sm-10">
-          <paper-input id="newModel" label="New Model Name" type="text"></paper-input>
-        </div>
-        <div class="col-sm-2">
-          <paper-button class="btn btn-primary btn-block" on-tap="_newModelHandler">Add Model</paper-button>
-        </div>
-      </div>
-    </div>
-
-    <div class="fluid-container">
-
-      <!--iterate through meter models here-->
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <div class="col-sm-8">
+    <paper-material>
+      <div class="fluid-container new-container">
+        <div class="row">
+          <div class="col-sm-10">
             <paper-input
-                    type="text"
-                    no-label
-                    value="Meter Model Name" readonly$="[[_computeReadOnly(_isStatusEdit)]]"></paper-input>
+                    id="newModel"
+                    label="New Model Name"
+                    required
+                    error-message="Please provide a name for the meter model"
+                    type="text"></paper-input>
           </div>
           <div class="col-sm-2">
-            <paper-icon-button icon="create" class$="btn btn-block [[_computeBtnStyle(_isStatusEdit)]]" on-tap="_editBtnHandler">textHere</paper-icon-button>
-          </div>
-          <div class="col-sm-2">
-            <paper-icon-button class="btn btn-danger btn-block" icon="delete" on-tap="_modalHandler" ></paper-icon-button>
+            <paper-button class="btn btn-primary btn-block" on-tap="_newModelHandler" raised>Add Model</paper-button>
           </div>
         </div>
       </div>
+    </paper-material>
 
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <div class="col-sm-8">
-            <paper-input
-                    type="text"
-                    no-label
-                    value="Meter Model Name" readonly$="[[_computeReadOnly(_isStatusEdit)]]"></paper-input>
+    <paper-material>
+
+      <div class="fluid-container new-container">
+        <div class="row">
+          <div class="col-sm-6">
+            <paper-input label="New Model Name" type="text"></paper-input>
           </div>
-          <div class="col-sm-2">
-            <paper-icon-button icon="create" class$="btn btn-block [[_computeBtnStyle(_isStatusEdit)]]" on-tap="_editBtnHandler">[[_computeButtonText(_isStatusEdit)]]</paper-icon-button>
-          </div>
-          <div class="col-sm-2">
-            <paper-icon-button class="btn btn-danger btn-block" icon="delete" on-tap="_modalHandler" ></paper-icon-button>
-          </div>
+          <!--<div class="col-sm-2">-->
+          <!--<paper-button class="btn btn-primary btn-block" on-tap="_newModelHandler" raised>Add Model</paper-button>-->
+          <!--</div>-->
         </div>
       </div>
 
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <div class="col-sm-8">
-            <paper-input
-                    type="text"
-                    no-label
-                    value="Meter Model Name" readonly$="[[_computeReadOnly(_isStatusEdit)]]"></paper-input>
+      <div class="fluid-container">
+
+        <template is="dom-repeat" items="">
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <div class="col-sm-8">
+                <paper-input
+                        type="text"
+                        no-label
+                        value="Meter Model Name" readonly$="[[_computeReadOnly(_isStatusEdit)]]"></paper-input>
+              </div>
+              <div class="col-sm-2">
+                <paper-icon-button icon="create" class$="btn btn-block [[_computeBtnStyle(_isStatusEdit)]]" on-tap="_editBtnHandler">textHere</paper-icon-button>
+              </div>
+              <div class="col-sm-2">
+                <paper-icon-button class="btn btn-danger btn-block" icon="delete" on-tap="_modalHandler" ></paper-icon-button>
+              </div>
+            </div>
           </div>
-          <div class="col-sm-2">
-            <paper-icon-button icon="create" class$="btn btn-block [[_computeBtnStyle(_isStatusEdit)]]" on-tap="_editBtnHandler">[[_computeButtonText(_isStatusEdit)]]</paper-icon-button>
-          </div>
-          <div class="col-sm-2">
-            <paper-icon-button class="btn btn-danger btn-block" icon="delete" on-tap="_modalHandler" ></paper-icon-button>
+        </template>
+
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="col-sm-8">
+              <paper-input
+                      type="text"
+                      no-label
+                      value="Meter Model Name" readonly$="[[_computeReadOnly(_isStatusEdit)]]"></paper-input>
+            </div>
+            <div class="col-sm-2">
+              <paper-icon-button icon="create" class$="btn btn-block [[_computeBtnStyle(_isStatusEdit)]]" on-tap="_editBtnHandler">textHere</paper-icon-button>
+            </div>
+            <div class="col-sm-2">
+              <paper-icon-button class="btn btn-danger btn-block" icon="delete" on-tap="_modalHandler" ></paper-icon-button>
+            </div>
           </div>
         </div>
+
       </div>
 
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <div class="col-sm-8">
-            <paper-input
-                    type="text"
-                    no-label
-                    value="Meter Model Name" readonly$="[[_computeReadOnly(_isStatusEdit)]]"></paper-input>
-          </div>
-          <div class="col-sm-2">
-            <paper-icon-button icon="create" class$="btn btn-block [[_computeBtnStyle(_isStatusEdit)]]" on-tap="_editBtnHandler">[[_computeButtonText(_isStatusEdit)]]</paper-icon-button>
-          </div>
-          <div class="col-sm-2">
-            <paper-icon-button class="btn btn-danger btn-block" icon="delete" on-tap="_modalHandler" ></paper-icon-button>
-          </div>
-        </div>
-      </div>
+    </paper-material>
 
-    </div>
-
-    <paper-dialog id="meterModal" modal no-cancel-on-esc-key no-cancel-on-outside-click>
+    <paper-dialog
+            id="meterModal"
+            modal
+            no-cancel-on-esc-key
+            no-cancel-on-outside-click
+            on-iron-overlay-opened="_patchOverlay" >
       <h2>Please Confirm Meter Model Deletion</h2>
       <p>
         Are you sure you want to delete the <strong>Model Name</strong> meter model?
@@ -163,7 +166,12 @@ Element to display global meter model settings on the Centular platform
           },
 
           _newModelHandler : function(){
-              var newModelName = this.$.newModel.value;
+
+              var newModelInput = this.$.newModel;
+
+              if(newModelInput.validate()){
+                  console.log(newModelInput.value);
+              }
 
 //          todo: add model api call
 //          todo: refresh list of models
@@ -188,7 +196,13 @@ Element to display global meter model settings on the Centular platform
               //          todo: remove model api call
 //          todo: refresh list of models
 //          todo: trigger notification
-          }
+          },
+
+          _patchOverlay: function (e) {
+              if (e.target.withBackdrop) {
+                  e.target.parentNode.insertBefore(e.target.backdropElement, e.target);
+              }
+          },
 
       });
   </script>
