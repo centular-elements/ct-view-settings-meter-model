@@ -5,6 +5,7 @@
 
 <link rel="import" href="../ct-shared-styles/ct-application-theme.html">
 <link rel="import" href="../ct-grid-controls/ct-grid-controls.html">
+<link rel="import" href="../iron-data-table/iron-data-table.html">
 
 <!--
 `ct-view-settings-meter-model`
@@ -56,55 +57,76 @@ Element to display global meter model settings on the Centular platform
 
     <paper-material>
 
-      <div class="fluid-container new-container">
-        <div class="row">
-          <div class="col-sm-6">
-            <paper-input label="New Model Name" type="text"></paper-input>
-          </div>
-          <!--<div class="col-sm-2">-->
-          <!--<paper-button class="btn btn-primary btn-block" on-tap="_newModelHandler" raised>Add Model</paper-button>-->
-          <!--</div>-->
-        </div>
-      </div>
-
       <div class="fluid-container">
 
-        <template is="dom-repeat" items="">
-          <div class="panel panel-default">
-            <div class="panel-body">
-              <div class="col-sm-8">
-                <paper-input
-                        type="text"
-                        no-label
-                        value="Meter Model Name" readonly$="[[_computeReadOnly(_isStatusEdit)]]"></paper-input>
-              </div>
-              <div class="col-sm-2">
-                <paper-icon-button icon="create" class$="btn btn-block [[_computeBtnStyle(_isStatusEdit)]]" on-tap="_editBtnHandler">textHere</paper-icon-button>
-              </div>
-              <div class="col-sm-2">
-                <paper-icon-button class="btn btn-danger btn-block" icon="delete" on-tap="_modalHandler" ></paper-icon-button>
-              </div>
-            </div>
-          </div>
-        </template>
+        <!--<ct-grid-controls items="[[ remoteData ]]" filters="[[filters]]">-->
+
+        <!--include data table-->
+        <iron-data-table>
+
+          <data-table-column name="Meter Name">
+            <template>[[index]] - [[item.name]]</template>
+          </data-table-column>
+          <data-table-column name="Unit Number" width="65px" sort-by="unitNumber">
+            <template>[[item.unitNumber]]</template>
+          </data-table-column>
+          <data-table-column name="Address" width="200px" sort-by="buildingAddress">
+            <template>[[item.buildingAddress]]</template>
+          </data-table-column>
+          <data-table-column name="Meter Type" sort-by="meterType.name">
+            <template>[[item.meterType.name]]</template>
+          </data-table-column>
+          <data-table-column name="Meter Number" sort-by="number">
+            <template>[[item.number]]</template>
+          </data-table-column>
+          <data-table-column name="Meter Status" sort-by="meterStatus.name">
+            <template>[[item.meterStatus.name]]</template>
+          </data-table-column>
+          <data-table-column name="Actions">
+            <template>
+              <button on-tap="_computeAction" data-action="view" class="btn btn-primary">View</button>
+            </template>
+          </data-table-column>
+
+        </iron-data-table>
+        <!--</ct-grid-controls>-->
+
+        <!--<template is="dom-repeat" items="">-->
+        <!--<div class="panel panel-default">-->
+        <!--<div class="panel-body">-->
+        <!--<div class="col-sm-8">-->
+        <!--<paper-input-->
+        <!--type="text"-->
+        <!--no-label-->
+        <!--value="Meter Model Name" readonly$="[[_computeReadOnly(_isStatusEdit)]]"></paper-input>-->
+        <!--</div>-->
+        <!--<div class="col-sm-2">-->
+        <!--<paper-icon-button icon="create" class$="btn btn-block [[_computeBtnStyle(_isStatusEdit)]]" on-tap="_editBtnHandler">textHere</paper-icon-button>-->
+        <!--</div>-->
+        <!--<div class="col-sm-2">-->
+        <!--<paper-icon-button class="btn btn-danger btn-block" icon="delete" on-tap="_modalHandler" ></paper-icon-button>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</template>-->
 
 
-        <div class="panel panel-default">
-          <div class="panel-body">
-            <div class="col-sm-8">
-              <paper-input
-                      type="text"
-                      no-label
-                      value="Meter Model Name" readonly$="[[_computeReadOnly(_isStatusEdit)]]"></paper-input>
-            </div>
-            <div class="col-sm-2">
-              <paper-icon-button icon="create" class$="btn btn-block [[_computeBtnStyle(_isStatusEdit)]]" on-tap="_editBtnHandler">textHere</paper-icon-button>
-            </div>
-            <div class="col-sm-2">
-              <paper-icon-button class="btn btn-danger btn-block" icon="delete" on-tap="_modalHandler" ></paper-icon-button>
-            </div>
-          </div>
-        </div>
+        <!--<div class="panel panel-default">-->
+        <!--<div class="panel-body">-->
+        <!--<div class="col-sm-8">-->
+        <!--<paper-input-->
+        <!--type="text"-->
+        <!--no-label-->
+        <!--value="Meter Model Name" readonly$="[[_computeReadOnly(_isStatusEdit)]]"></paper-input>-->
+        <!--</div>-->
+        <!--<div class="col-sm-2">-->
+        <!--<paper-icon-button icon="create" class$="btn btn-block [[_computeBtnStyle(_isStatusEdit)]]" on-tap="_editBtnHandler">textHere</paper-icon-button>-->
+        <!--</div>-->
+        <!--<div class="col-sm-2">-->
+        <!--<paper-icon-button class="btn btn-danger btn-block" icon="delete" on-tap="_modalHandler" ></paper-icon-button>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
 
       </div>
 
