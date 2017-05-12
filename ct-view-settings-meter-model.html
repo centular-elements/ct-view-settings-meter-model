@@ -1,10 +1,12 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../paper-dialog/paper-dialog.html">
 
 <link rel="import" href="../ct-shared-styles/ct-application-theme.html">
 <link rel="import" href="../ct-grid-controls/ct-grid-controls.html">
+<link rel="import" href="../ct-editable-switcher/ct-editable-switcher.html">
 <link rel="import" href="../iron-data-table/iron-data-table.html">
 
 <!--
@@ -34,6 +36,10 @@ Element to display global meter model settings on the Centular platform
         padding: 10px;
       }
 
+      paper-icon-button + paper-icon-button {
+        margin-left: 15px;
+      }
+
 
     </style>
 
@@ -59,74 +65,35 @@ Element to display global meter model settings on the Centular platform
 
       <div class="fluid-container">
 
-        <!--<ct-grid-controls items="[[ remoteData ]]" filters="[[filters]]">-->
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="table-responsive">
+              <table class="table table-striped table-bordered table-hover table-middle">
+                <thead>
+                <th>Meter Name</th>
+                <th>Actions</th>
+                </thead>
+                <tbody>
 
-        <!--include data table-->
-        <iron-data-table>
+                <template is="dom-repeat" items="{{meterDataTemp}}">
+                  <tr>
+                    <td>
+                      <ct-editable-switcher id="[[_computeId(index)]]">
+                        <paper-input class="input-element" type="text" allowed-pattern="[0-9\.]" no-label="" value="[[item.name]]"></paper-input>
+                      </ct-editable-switcher>
+                    </td>
+                    <td class="text-center">
+                      <paper-icon-button icon="create" class="table-button btn-default btn-sm" on-tap="_editHandler" raised></paper-icon-button>
+                      <paper-icon-button icon="delete" data-item-id="[[index]]" class="table-button btn-danger btn-sm" on-tap="_modalHandler" raised></paper-icon-button>
+                    </td>
+                  </tr>
+                </template>
 
-          <data-table-column name="Meter Name">
-            <template>[[index]] - [[item.name]]</template>
-          </data-table-column>
-          <data-table-column name="Unit Number" width="65px" sort-by="unitNumber">
-            <template>[[item.unitNumber]]</template>
-          </data-table-column>
-          <data-table-column name="Address" width="200px" sort-by="buildingAddress">
-            <template>[[item.buildingAddress]]</template>
-          </data-table-column>
-          <data-table-column name="Meter Type" sort-by="meterType.name">
-            <template>[[item.meterType.name]]</template>
-          </data-table-column>
-          <data-table-column name="Meter Number" sort-by="number">
-            <template>[[item.number]]</template>
-          </data-table-column>
-          <data-table-column name="Meter Status" sort-by="meterStatus.name">
-            <template>[[item.meterStatus.name]]</template>
-          </data-table-column>
-          <data-table-column name="Actions">
-            <template>
-              <button on-tap="_computeAction" data-action="view" class="btn btn-primary">View</button>
-            </template>
-          </data-table-column>
-
-        </iron-data-table>
-        <!--</ct-grid-controls>-->
-
-        <!--<template is="dom-repeat" items="">-->
-        <!--<div class="panel panel-default">-->
-        <!--<div class="panel-body">-->
-        <!--<div class="col-sm-8">-->
-        <!--<paper-input-->
-        <!--type="text"-->
-        <!--no-label-->
-        <!--value="Meter Model Name" readonly$="[[_computeReadOnly(_isStatusEdit)]]"></paper-input>-->
-        <!--</div>-->
-        <!--<div class="col-sm-2">-->
-        <!--<paper-icon-button icon="create" class$="btn btn-block [[_computeBtnStyle(_isStatusEdit)]]" on-tap="_editBtnHandler">textHere</paper-icon-button>-->
-        <!--</div>-->
-        <!--<div class="col-sm-2">-->
-        <!--<paper-icon-button class="btn btn-danger btn-block" icon="delete" on-tap="_modalHandler" ></paper-icon-button>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</template>-->
-
-
-        <!--<div class="panel panel-default">-->
-        <!--<div class="panel-body">-->
-        <!--<div class="col-sm-8">-->
-        <!--<paper-input-->
-        <!--type="text"-->
-        <!--no-label-->
-        <!--value="Meter Model Name" readonly$="[[_computeReadOnly(_isStatusEdit)]]"></paper-input>-->
-        <!--</div>-->
-        <!--<div class="col-sm-2">-->
-        <!--<paper-icon-button icon="create" class$="btn btn-block [[_computeBtnStyle(_isStatusEdit)]]" on-tap="_editBtnHandler">textHere</paper-icon-button>-->
-        <!--</div>-->
-        <!--<div class="col-sm-2">-->
-        <!--<paper-icon-button class="btn btn-danger btn-block" icon="delete" on-tap="_modalHandler" ></paper-icon-button>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
 
       </div>
 
@@ -143,8 +110,8 @@ Element to display global meter model settings on the Centular platform
         Are you sure you want to delete the <strong>Model Name</strong> meter model?
       </p>
       <div class="buttons">
-        <paper-button class="btn btn-default"dialog-dismiss>Cancel</paper-button>
-        <paper-button class="btn btn-danger"dialog-confirm on-tap="_removeModelHandler">Delete</paper-button>
+        <paper-button class="btn btn-default" dialog-dismiss>Cancel</paper-button>
+        <paper-button class="btn btn-danger" dialog-confirm on-tap="_deleteModel">Delete</paper-button>
       </div>
     </paper-dialog>
 
@@ -162,29 +129,61 @@ Element to display global meter model settings on the Centular platform
                       return false;
                   }
               },
+
+              _deleteId: Number,
+
+              meterDataTemp : {
+                  type: Array,
+                  value: function(){
+                      return [
+                          {
+                              'id' : 1,
+                              'name' : "Meter Number 5"
+                          },
+                          {
+                              'id' : 2,
+                              'name' : "Meter Number 6"
+                          }
+                      ]
+                  }
+              }
           },
 
-          _computeReadOnly : function(status){
-              return (!status);
+          _computeId : function(idx){
+              return 'item-'+idx;
           },
 
-          _computeButtonText: function(isEdit){
-              return (isEdit) ? 'Save Model' : 'Edit Model';
+          _computeButtonIcon: function(element){
+              if(icon === 'save') {
+                  element.setAttribute('icon', 'create');
+              } else if(icon === 'create') {
+                  element.setAttribute('icon', 'save');
+              }
           },
 
-          _computeBtnStyle : function(isEdit){
-              return (isEdit) ? "btn-primary" : "btn-default";
+          _computeBtnStyle : function(element){
+              if(element.classList.contains('btn-primary')) {
+                  element.classList.remove('btn-primary');
+                  element.classList.add('btn-default');
+              } else if(element.classList.contains('btn-default')){
+                  element.classList.remove('btn-default');
+                  element.classList.add('btn-primary');
+              }
           },
 
-          _toggleStatus : function(){
-              this._isStatusEdit = !this._isStatusEdit;
+          _toggleStatus : function(element){
+
+              var icon = element.getAttribute('icon');
+
           },
 
-          _editBtnHandler : function(){
-//            todo: event fired on edit/save
-//            todo: event to emit notification
+          _editHandler : function(e){
+              var idIdx = '#item-'+e.model.index;
+              var inputElem = this.$$(idIdx);
 
-              this._toggleStatus();
+              inputElem.editMode = !inputElem.editMode;
+
+              this._toggleStatus(Polymer.dom(e).localTarget);
           },
 
           _newModelHandler : function(){
@@ -201,23 +200,12 @@ Element to display global meter model settings on the Centular platform
           },
 
           _modalHandler : function(e){
+              this._deleteId = e.model.item.id;
               this.$.meterModal.open();
           },
 
-          _renameModelHandler : function(e) {
-              var modelObj = e.model.item;
-
-              //          todo: rename model api call
-//          todo: refresh list of models
-//          todo: trigger notification
-          },
-
-          _removeModelHandler : function(e) {
-              var modelObj = e.model.item;
-
-              //          todo: remove model api call
-//          todo: refresh list of models
-//          todo: trigger notification
+          _deleteModel : function(e) {
+              console.info('poof! , id: '+this._deleteId+' has been deleted')
           },
 
           _patchOverlay: function (e) {
@@ -225,6 +213,7 @@ Element to display global meter model settings on the Centular platform
                   e.target.parentNode.insertBefore(e.target.backdropElement, e.target);
               }
           },
+
 
       });
   </script>
