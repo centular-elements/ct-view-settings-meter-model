@@ -21,6 +21,23 @@ Element to display global meter model settings on the Centular platform
     <style is="custom-styles">
       :host {
         display: block;
+        --paper-input-container:{
+          border-top: 1px solid #ccc;
+          border-left: 1px solid #ccc;
+          border-right: 1px solid #ccc;
+          border-bottom: none;
+          padding: 0 !important;
+        };
+
+        --paper-input-container-input: {
+          text-overflow: ellipsis;
+          width: calc(100% - 20px);
+          margin-left: 10px;
+        };
+
+        --paper-input-container-label: {
+          margin-left: 10px;
+        };
       }
 
       .new-container .row {
@@ -69,7 +86,7 @@ Element to display global meter model settings on the Centular platform
               <table class="table table-striped table-bordered table-hover table-middle">
                 <thead>
                 <th>Meter Name</th>
-                <th>Actions</th>
+                <th class="text-center">Actions</th>
                 </thead>
                 <tbody>
 
