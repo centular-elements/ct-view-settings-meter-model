@@ -18,44 +18,63 @@ Element to display global meter model settings on the Centular platform
   <template>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <style is="custom-styles">
-      :host {
-        display: block;
-        --paper-input-container:{
-          border-top: 1px solid #ccc;
-          border-left: 1px solid #ccc;
-          border-right: 1px solid #ccc;
-          border-bottom: none;
-          padding: 0 !important;
-        };
+    :host {
+      display: block;
+      --paper-input-container:{
+        border-top: 1px solid #ccc;
+        border-left: 1px solid #ccc;
+        border-right: 1px solid #ccc;
+        border-bottom: none;
+        padding: 0 !important;
+      };
+      --paper-input-container-input: {
+        text-overflow: ellipsis;
+        width: calc(100% - 20px);
+        margin-left: 10px;
+      };
+      --paper-input-container-label: {
+        margin-left: 10px;
+        width: calc(100% - 20px);
+      };
+    }
+    .new-container .row {
+      display: flex;
+      align-items: center;
+    }
+    .custom-row {
 
-        --paper-input-container-input: {
-          text-overflow: ellipsis;
-          width: calc(100% - 20px);
-          margin-left: 10px;
-        };
+    }
+    .row.dom-repeated-row {
+      margin-left: 0;
+      margin-right: 0;
 
-        --paper-input-container-label: {
-          margin-left: 10px;
-        };
-      }
-
-      .new-container .row {
-        display: flex;
-        align-items: center;
-      }
-      .margin-10v {
-        margin: 10px 0;
-      }
-      paper-material {
-        background: #fff;
-        margin-bottom: 15px;
-        padding: 10px;
-      }
-
-      paper-icon-button + paper-icon-button {
-        margin-left: 15px;
-      }
-
+      border:1px solid #ccc;
+    }
+    .dom-repeated-row:nth-of-type(odd) {
+        background: #f9f9f9;
+    }
+    .bordered-content {
+      padding: 5px 0;
+    }
+    .col-input {
+      padding-left:10px !important;
+      padding-right: 10px !important;
+    }
+    .margin-10v {
+      margin: 10px 0;
+    }
+    paper-material {
+      background: #fff;
+      margin-bottom: 15px;
+      padding: 10px;
+    }
+    paper-icon-button + paper-icon-button {
+      margin-left: 15px;
+    }
+    paper-input {
+      text-overflow: ellipsis;
+      width: calc(~100% - 10px);
+    }
 
     </style>
 
@@ -80,37 +99,35 @@ Element to display global meter model settings on the Centular platform
     <paper-material>
 
       <div class="fluid-container">
-
-        <div class="row">
-          <div class="col-xs-12">
-            <div class="table-responsive">
-              <table class="table table-striped table-bordered table-hover table-middle">
-                <thead>
-                <th>Meter Name</th>
-                <th class="text-center">Actions</th>
-                </thead>
-                <tbody>
-
-                <template is="dom-repeat" items="{{meterDataTemp}}">
-                  <tr>
-                    <td>
-                      <ct-editable-switcher id="[[_computeId(index)]]">
-                        <paper-input class="input-element" type="text" allowed-pattern="[0-9\.]" no-label="" value="[[item.name]]"></paper-input>
-                      </ct-editable-switcher>
-                    </td>
-                    <td class="text-center">
-                      <paper-icon-button icon="create" class="table-button btn-default btn-sm" on-tap="_editHandler" raised></paper-icon-button>
-                      <paper-icon-button icon="delete" data-item-id="[[index]]" class="table-button btn-danger btn-sm" on-tap="_modalHandler" raised></paper-icon-button>
-                    </td>
-                  </tr>
-                </template>
-
-                </tbody>
-              </table>
-            </div>
+        <div class="row dom-repeated-row margin-10v">
+          <div class="col-xs-9">
+            Meter Name
+          </div>
+          <div class="col-xs-3 text-center">
+            Actions
           </div>
         </div>
-
+        <div class="row">
+          <div class="col-xs-12">
+            <template is="dom-repeat" items="{{meterDataTemp}}">
+              <div class="row dom-repeated-row margin-10v">
+                <div class="col-xs-9">
+                  <div class="bordered-content">
+                    <ct-editable-switcher id="[[_computeId(index)]]" value-prop="[[item.name]]">
+                      <paper-input class="input-element" type="text" allowed-pattern="[0-9\.]" no-label="" value="[[item.name]]"></paper-input>
+                    </ct-editable-switcher>
+                  </div>
+                </div>
+                  <div class="col-xs-3 text-center">
+                    <div class="bordered-content">
+                      <paper-icon-button icon="create" class="table-button btn-default btn-sm" on-tap="_editHandler" raised></paper-icon-button>
+                      <paper-icon-button icon="delete" data-item-id="[[index]]" class="table-button btn-danger btn-sm" on-tap="_modalHandler" raised></paper-icon-button>
+                    </div>
+                  </div>
+                </div>
+              </template>
+          </div>
+        </div>
       </div>
 
     </paper-material>
