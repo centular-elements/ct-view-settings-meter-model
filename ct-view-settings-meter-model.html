@@ -4,6 +4,7 @@
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../paper-dialog/paper-dialog.html">
 <link rel="import" href="../ct-meter-model-api/ct-meter-model-api.html">
+<link rel="import" href="../ct-delete-dialog/ct-delete-dialog.html">
 
 <link rel="import" href="../ct-editable-switcher/ct-editable-switcher.html">
 
@@ -189,14 +190,16 @@ Element to display global meter model settings on the Centular platform
           },
 
           _editHandler : function(e){
-              var inputID = '#item-'+ e.model.item.id;
-              var value = this.$$(inputID).value;
+
               var switcherID = '#item-'+ e.model.index;
               var switcher = this.$$(switcherID);
 
               if(switcher.editMode){
                 if(switcher.validate()){
+                  var inputID = '#item-'+ e.model.item.id;
+                  var value = this.$$(inputID).value;
                   switcher.editMode = !switcher.editMode;
+                  //send the body for the update
                   this._update({"text": value}, e.model.item.id);
                 }
               }else{
@@ -226,10 +229,10 @@ Element to display global meter model settings on the Centular platform
               this._getList();
           },
           _modalHandler : function(e){
-            this.$$('#deleteDialog').key = e.model.item.id;
-            this.$$('#deleteDialog').resource = e.model.item.name
-            this.$$('#deleteDialog').subject = "Meter Model"
-            this.$$('#deleteDialog').open();
+            this.$.deleteDialog.key = e.model.item.id;
+            this.$.deleteDialog.resource = e.model.item.name
+            this.$.deleteDialog.subject = "Meter Model"
+            this.$.deleteDialog.open();
           },
 
           /* Meter Modal Calls */
@@ -269,8 +272,9 @@ Element to display global meter model settings on the Centular platform
                   });
           },
 
-          //delete list function
-          _delete : function (id) {
+          //delete  function
+          _delete : function (e) {
+            var id = e.detail.id;
             this.$.meterModelApi.deleteMeterModel(id)
             .then(this.fire.bind(this, 'toast', {message: 'Successfully deleted Meter Model', type: 'success'}))
                   .catch(this.fire.bind(this, 'toast', {message: 'Error deleting Meter Model.', type: 'danger'}))
