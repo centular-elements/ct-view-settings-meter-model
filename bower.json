@@ -10,12 +10,14 @@
     "paper-dialog": "PolymerElements/paper-dialog#^1.1.0",
     "shared-styles": "git://github.com/Centular/shared-styles.git",
     "ct-editable-switcher": "git://github.com/centular-elements/ct-editable-switcher.git",
-    "iron-form": "PolymerElements/iron-form#^1.1.4"
+    "iron-form": "PolymerElements/iron-form#^1.1.4",
+    "ct-meter-model-api": "git://github.com/centular-elements/ct-meter-model-api.git"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
     "web-component-tester": "^4.0.0",
-    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0",
+    "ct-core-utils" : "git@github.com:centular-elements/ct-core-utils.git"
   }
 }

@@ -3,6 +3,7 @@
 <link rel="import" href="../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../ct-meter-model-api/ct-meter-model-api.html">
 
 <link rel="import" href="../ct-editable-switcher/ct-editable-switcher.html">
 
@@ -77,7 +78,7 @@ Element to display global meter model settings on the Centular platform
     }
 
     </style>
-
+    <ct-meter-model-api id="meterModelApi"></ct-meter-model-api>
     <paper-material>
       <div class="fluid-container new-container margin-10v">
         <div class="row">
@@ -90,7 +91,7 @@ Element to display global meter model settings on the Centular platform
                     type="text"></paper-input>
           </div>
           <div class="col-sm-2">
-            <paper-button class="btn btn-primary btn-block" on-tap="_newModelHandler" raised>Add Model</paper-button>
+            <paper-button class="btn btn-primary btn-block" on-tap="_newHandler" raised>Add Model</paper-button>
           </div>
         </div>
       </div>
@@ -109,12 +110,12 @@ Element to display global meter model settings on the Centular platform
         </div>
         <div class="row">
           <div class="col-xs-12">
-            <template is="dom-repeat" items="{{meterDataTemp}}">
+            <template is="dom-repeat" items="{{_meterModelList}}">
               <div class="row dom-repeated-row margin-10v">
                 <div class="col-xs-9">
                   <div class="bordered-content">
-                    <ct-editable-switcher id="[[_computeId(index)]]" value-prop="[[item.name]]">
-                      <paper-input class="input-element" type="text" allowed-pattern="[0-9\.]" no-label="" value="[[item.name]]"></paper-input>
+                    <ct-editable-switcher id="[[_computeId(index)]]" value-prop="[[item.text]]">
+                      <paper-input class="input-element" id="#item-[[item.id]]" type="text" allowed-pattern="[0-9\.]" no-label="" value="[[item.text]]"></paper-input>
                     </ct-editable-switcher>
                   </div>
                 </div>
@@ -132,21 +133,7 @@ Element to display global meter model settings on the Centular platform
 
     </paper-material>
 
-    <paper-dialog
-            id="meterModal"
-            modal
-            no-cancel-on-esc-key
-            no-cancel-on-outside-click
-            on-iron-overlay-opened="_patchOverlay" >
-      <h2>Please Confirm Meter Model Deletion</h2>
-      <p>
-        Are you sure you want to delete the <strong>Model Name</strong> meter model?
-      </p>
-      <div class="buttons">
-        <paper-button class="btn btn-default" dialog-dismiss>Cancel</paper-button>
-        <paper-button class="btn btn-danger" dialog-confirm on-tap="_deleteModel">Delete</paper-button>
-      </div>
-    </paper-dialog>
+    <ct-delete-dialog id='deleteDialog'></ct-delete-dialog>
 
   </template>
 
@@ -162,24 +149,17 @@ Element to display global meter model settings on the Centular platform
                       return false;
                   }
               },
-
-              _deleteId: Number,
-
-              meterDataTemp : {
+              _meterModelList : {
                   type: Array,
-                  value: function(){
-                      return [
-                          {
-                              'id' : 1,
-                              'name' : "Meter Number 5"
-                          },
-                          {
-                              'id' : 2,
-                              'name' : "Meter Number 6"
-                          }
-                      ]
-                  }
-              }
+                  notify : true
+              },
+              refreshing: {
+                  type: Boolean,
+                  notify: true
+              },
+          },
+          listeners: {
+              'delete' : '_delete'
           },
 
           _computeId : function(idx){
@@ -205,49 +185,105 @@ Element to display global meter model settings on the Centular platform
           },
 
           _toggleStatus : function(element){
-
               var icon = element.getAttribute('icon');
-
           },
 
           _editHandler : function(e){
-              var idIdx = '#item-'+e.model.index;
-              var inputElem = this.$$(idIdx);
+              var inputID = '#item-'+ e.model.item.id;
+              var input = this.$$(inputID);
+              var switcherID = '#item-'+ e.model.index;
+              var switcher = this.$$(switcherID);
 
-              inputElem.editMode = !inputElem.editMode;
-
-              this._toggleStatus(Polymer.dom(e).localTarget);
+              if(!switcher.editMode){
+                if(input.validate()){
+                  switcher.editMode = !switcher.editMode;
+                  var params = {"id": e.model.item.id , "text": input.value}
+                  this._update(params);
+                  this._toggleStatus(Polymer.dom(e).localTarget);
+                }
+              }else{
+                this._toggleStatus(Polymer.dom(e).localTarget);
+              }
           },
 
-          _newModelHandler : function(){
+          _newHandler : function(){
 
               var newModelInput = this.$.newModel;
 
               if(newModelInput.validate()){
-                  console.log(newModelInput.value);
+                  var obj = {"text": newModelInput.value}
+                this._add(obj)
               }
 
-//          todo: add model api call
-//          todo: refresh list of models
-//          todo: trigger notification
+          },
+          ready : function(){
+              this.init();
           },
 
+          refresh: function() {
+              this.init();
+          },
+          init : function(){
+              this.refreshing = true;
+              this._getList();
+          },
           _modalHandler : function(e){
-              this._deleteId = e.model.item.id;
-              this.$.meterModal.open();
+            this.$.deleteDialog.key = e.model.item.id;
+            this.$.deleteDialog.resource = e.model.item.name
+            this.$.deleteDialog.subject = "Meter Model"
+            this.$.deleteDialog.open();
           },
 
-          _deleteModel : function(e) {
-              console.info('poof! , id: '+this._deleteId+' has been deleted')
+          /* Meter Modal Calls */
+
+          //return list function
+          _getList : function(){
+             //TODO: add paging!!!!
+              this.$.meterModelApi.getMeterModelDetails(0, 20)
+                  .then(function (request) {
+                  this._meterModelList = request.response.results;
+                          }.bind(this))
+
+                  .catch(this.fire.bind(this, 'toast', {message: 'Failed to load Meter Models', type: 'danger'}))
+                  .finally(this.set.bind(this, 'refreshing', false));
           },
 
-          _patchOverlay: function (e) {
-              if (e.target.withBackdrop) {
-                  e.target.parentNode.insertBefore(e.target.backdropElement, e.target);
-              }
+          //add function
+          _add : function (params) {
+            var body = {};
+            body['id'] = params.id;
+            body['text'] = params.text;
+            this.$.meterModelApi.addMeterModel(body)
+            .then(this.fire.bind(this, 'toast', {message: 'Successfully added new Meter Model.', type: 'success'}))
+                  .catch(this.fire.bind(this, 'toast', {message: 'Error adding Meter Model.', type: 'danger'}))
+                  .finally(function(){
+                      this.refreshing = false;
+                  });
           },
 
+          //update record function
+          _update : function (params) {
 
+            var body = {};
+            body['id'] = params.id;
+            body['text'] = params.text;
+            this.$.meterModelApi.updateMeterModel(body)
+            .then(this.fire.bind(this, 'toast', {message: 'Successfully updated Meter Model', type: 'success'}))
+                  .catch(this.fire.bind(this, 'toast', {message: 'Error updating Meter Model.', type: 'danger'}))
+                  .finally(function(){
+                      this.refreshing = false;
+                  });
+          },
+
+          //delete list function
+          _delete : function (params) {
+            this.$.meterModelApi.deleteMeterModel(params.id)
+            .then(this.fire.bind(this, 'toast', {message: 'Successfully deleted Meter Model', type: 'success'}))
+                  .catch(this.fire.bind(this, 'toast', {message: 'Error deleting Meter Model.', type: 'danger'}))
+                  .finally(function(){
+                      this.refreshing = false;
+                  });
+          },
       });
   </script>
 </dom-module>
