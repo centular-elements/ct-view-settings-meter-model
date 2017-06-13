@@ -115,7 +115,7 @@ Element to display global meter model settings on the Centular platform
                 <div class="col-xs-9">
                   <div class="bordered-content">
                     <ct-editable-switcher id="[[_computeId(index)]]" value-prop="[[item.text]]">
-                      <paper-input class="input-element" id="#item-[[item.id]]" type="text" allowed-pattern="[0-9\.]" no-label="" value="[[item.text]]"></paper-input>
+                      <paper-input class="input-element" id="item-[[item.id]]" type="text" no-label="" value="[[item.text]]"></paper-input>
                     </ct-editable-switcher>
                   </div>
                 </div>
@@ -184,25 +184,23 @@ Element to display global meter model settings on the Centular platform
               }
           },
 
-          _toggleStatus : function(element){
-              var icon = element.getAttribute('icon');
+          _toggleStatus : function(e){
+              e._isStateEdit = !e._isStateEdit;
           },
 
           _editHandler : function(e){
               var inputID = '#item-'+ e.model.item.id;
-              var input = this.$$(inputID);
+              var value = this.$$(inputID).value;
               var switcherID = '#item-'+ e.model.index;
               var switcher = this.$$(switcherID);
 
-              if(!switcher.editMode){
-                if(input.validate()){
+              if(switcher.editMode){
+                if(switcher.validate()){
                   switcher.editMode = !switcher.editMode;
-                  var params = {"id": e.model.item.id , "text": input.value}
-                  this._update(params);
-                  this._toggleStatus(Polymer.dom(e).localTarget);
+                  this._update({"text": value}, e.model.item.id);
                 }
               }else{
-                this._toggleStatus(Polymer.dom(e).localTarget);
+                switcher.editMode = !switcher.editMode
               }
           },
 
@@ -228,10 +226,10 @@ Element to display global meter model settings on the Centular platform
               this._getList();
           },
           _modalHandler : function(e){
-            this.$.deleteDialog.key = e.model.item.id;
-            this.$.deleteDialog.resource = e.model.item.name
-            this.$.deleteDialog.subject = "Meter Model"
-            this.$.deleteDialog.open();
+            this.$$('#deleteDialog').key = e.model.item.id;
+            this.$$('#deleteDialog').resource = e.model.item.name
+            this.$$('#deleteDialog').subject = "Meter Model"
+            this.$$('#deleteDialog').open();
           },
 
           /* Meter Modal Calls */
@@ -251,9 +249,9 @@ Element to display global meter model settings on the Centular platform
           //add function
           _add : function (params) {
             var body = {};
-            body['id'] = params.id;
-            body['text'] = params.text;
-            this.$.meterModelApi.addMeterModel(body)
+            body.id = params.id;
+            body.text = params.text;
+            this.$.meterModelApi.addMeterModel(JSON.stringify(body))
             .then(this.fire.bind(this, 'toast', {message: 'Successfully added new Meter Model.', type: 'success'}))
                   .catch(this.fire.bind(this, 'toast', {message: 'Error adding Meter Model.', type: 'danger'}))
                   .finally(function(){
@@ -262,12 +260,8 @@ Element to display global meter model settings on the Centular platform
           },
 
           //update record function
-          _update : function (params) {
-
-            var body = {};
-            body['id'] = params.id;
-            body['text'] = params.text;
-            this.$.meterModelApi.updateMeterModel(body)
+          _update : function (params, id) {
+            this.$.meterModelApi.updateMeterModel(JSON.stringify(meterModel), id)
             .then(this.fire.bind(this, 'toast', {message: 'Successfully updated Meter Model', type: 'success'}))
                   .catch(this.fire.bind(this, 'toast', {message: 'Error updating Meter Model.', type: 'danger'}))
                   .finally(function(){
@@ -276,8 +270,8 @@ Element to display global meter model settings on the Centular platform
           },
 
           //delete list function
-          _delete : function (params) {
-            this.$.meterModelApi.deleteMeterModel(params.id)
+          _delete : function (id) {
+            this.$.meterModelApi.deleteMeterModel(id)
             .then(this.fire.bind(this, 'toast', {message: 'Successfully deleted Meter Model', type: 'success'}))
                   .catch(this.fire.bind(this, 'toast', {message: 'Error deleting Meter Model.', type: 'danger'}))
                   .finally(function(){
