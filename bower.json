@@ -11,7 +11,8 @@
     "shared-styles": "git://github.com/Centular/shared-styles.git",
     "ct-editable-switcher": "git://github.com/centular-elements/ct-editable-switcher.git",
     "iron-form": "PolymerElements/iron-form#^1.1.4",
-    "ct-meter-model-api": "git://github.com/centular-elements/ct-meter-model-api.git"
+    "ct-meter-model-api": "git://github.com/centular-elements/ct-meter-model-api.git",
+    "ct-delete-dialog": "git://github.com/centular-elements/ct-delete-dialog.git"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
