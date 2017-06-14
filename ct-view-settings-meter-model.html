@@ -240,7 +240,7 @@ Element to display global meter model settings on the Centular platform
           //return list function
           _getList : function(){
              //TODO: add paging!!!!
-              this.$.meterModelApi.getMeterModelDetails(0, 20)
+              this.$.meterModelApi.getMeterModelDetails(1, 20)
                   .then(function (request) {
                   this._meterModelList = request.response.results;
                           }.bind(this))
