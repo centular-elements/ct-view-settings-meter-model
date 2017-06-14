@@ -263,7 +263,7 @@ Element to display global meter model settings on the Centular platform
           },
 
           //update record function
-          _update : function (params, id) {
+          _update : function (meterModel, id) {
             this.$.meterModelApi.updateMeterModel(JSON.stringify(meterModel), id)
             .then(this.fire.bind(this, 'toast', {message: 'Successfully updated Meter Model', type: 'success'}))
                   .catch(this.fire.bind(this, 'toast', {message: 'Error updating Meter Model.', type: 'danger'}))
@@ -279,7 +279,7 @@ Element to display global meter model settings on the Centular platform
             .then(this.fire.bind(this, 'toast', {message: 'Successfully deleted Meter Model', type: 'success'}))
                   .catch(this.fire.bind(this, 'toast', {message: 'Error deleting Meter Model.', type: 'danger'}))
                   .finally(function(){
-                      this.refreshing = false;
+                      this.refreshing = true;
                   });
           },
       });
